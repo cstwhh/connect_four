@@ -1,0 +1,27 @@
+0:
+2	19947	9927
+2	31458	24673
+
+1:
+2	15496	22291
+7	13386	12743
+
+2:
+7	9289	406
+7	5000	317
+
+3:
+7	5001	0
+7	5000	413
+
+4:
+7	5001	0
+7	5000	555
+
+Stat:
+ratio of A wins : 0
+ratio of B wins : 1
+ratio of Tie : 0
+
+ratio of (A wins + tie) : 0
+ratio of (B wins + tie) : 1
