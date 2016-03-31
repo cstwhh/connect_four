@@ -2,8 +2,8 @@
 #define MCTS_HEADER_PETTER
 
 #define MAX_ITERATIONS -1
-#define NUMBER_OF_THREADS  8
-#define MAX_TIME 3000
+#define NUMBER_OF_THREADS  4
+#define MAX_TIME 4000
 #define VERBOSE false;
 	//player1_options.verbose = true; 
 //
@@ -297,7 +297,6 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,std::mt19937_6
 	if (MAX_TIME >= 0) {
 		#ifndef USE_OPENMP
 		//throw std::runtime_error("ComputeOptions::max_time requires OpenMP.");
-		//cout<<"ComputeOptions::max_time requires OpenMP."<<endl;
 		#endif
 	}
 	// Will support more players later.
