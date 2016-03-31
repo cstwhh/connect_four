@@ -1,0 +1,69 @@
+fight 100 level:
+ratio of (A wins + tie) : 0.333333
+fight 98 level:
+ratio of (A wins + tie) : 0.833333
+fight 96 level:
+ratio of (A wins + tie) : 0.833333
+fight 94 level:
+ratio of (A wins + tie) : 0.666667
+fight 92 level:
+ratio of (A wins + tie) : 1
+fight 90 level:
+ratio of (A wins + tie) : 0.5
+fight 88 level:
+ratio of (A wins + tie) : 0.666667
+fight 86 level:
+ratio of (A wins + tie) : 1
+fight 84 level:
+ratio of (A wins + tie) : 0.833333
+fight 80 level:
+ratio of (A wins + tie) : 1
+fight 78 level:
+ratio of (A wins + tie) : 0.5
+fight 76 level:
+ratio of (A wins + tie) : 1
+fight 74 level:
+ratio of (A wins + tie) : 0.666667
+fight 72 level:
+ratio of (A wins + tie) : 1
+fight 70 level:
+ratio of (A wins + tie) : 0.666667
+fight 68 level:
+ratio of (A wins + tie) : 0.833333
+fight 66 level:
+ratio of (A wins + tie) : 0.166667
+fight 64 level:
+ratio of (A wins + tie) : 0.833333
+fight 62 level:
+ratio of (A wins + tie) : 1
+fight 60 level:
+ratio of (A wins + tie) : 0.5
+fight 58 level:
+ratio of (A wins + tie) : 0.666667
+fight 56 level:
+ratio of (A wins + tie) : 1
+fight 54 level:
+ratio of (A wins + tie) : 1
+fight 52 level:
+ratio of (A wins + tie) : 0.833333
+fight 50 level:
+ratio of (A wins + tie) : 0.5
+fight 48 level:
+ratio of (A wins + tie) : 0.833333
+fight 46 level:
+ratio of (A wins + tie) : 0.833333
+fight 44 level:
+ratio of (A wins + tie) : 1
+fight 42 level:
+ratio of (A wins + tie) : 0.833333
+fight 40 level:
+ratio of (A wins + tie) : 0.333333
+fight 38 level:
+ratio of (A wins + tie) : 0.5
+fight 36 level:
+ratio of (A wins + tie) : 0.833333
+fight 34 level:
+ratio of (A wins + tie) : 0.833333
+fight 32 level:
+ratio of (A wins + tie) : 1
+28!
