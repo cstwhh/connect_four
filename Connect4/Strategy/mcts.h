@@ -55,7 +55,7 @@ struct ComputeOptions
 	bool verbose;
 
 	ComputeOptions() :
-		number_of_threads(1),
+		number_of_threads(4),
 		max_iterations(10000),
 		//max_time(-1.0), // default is no time limit.
 		max_time(4.5),
@@ -366,7 +366,7 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,
 			
 			#endif
 			finish = clock();
-			if(finish - start > 3000)	{
+			if(finish - start > options.max_time)	{
 			//if (time - start_time >= options.max_time) {
 				break;
 			}
@@ -397,28 +397,19 @@ typename State::Move compute_move(const State root_state,
 	vector<future<unique_ptr<Node<State>>>> root_futures;
 	ComputeOptions job_options = options;
 	job_options.verbose = false;
-	/*for (int t = 0; t < options.number_of_threads; ++t) {
+	for (int t = 0; t < options.number_of_threads; ++t) {
 		auto func = [t, &root_state, &job_options] () -> std::unique_ptr<Node<State>>
 		{
 			return compute_tree(root_state, job_options, 1012411 * t + 12515);
 		};
 
 		root_futures.push_back(std::async(std::launch::async, func));
-		cout<<"loop:"<<t<<endl;
 	}
-	cout<<"before collect"<<endl;
-	// Collect the results.*/
+	// Collect the results.
 	vector<unique_ptr<Node<State>>> roots;
-	/*cout<<"ready collect"<<endl;
 	for (int t = 0; t < options.number_of_threads; ++t) {
-		cout<<1<<endl;
-		root_futures[t].get();
-		cout<<2<<endl;
 		roots.push_back(std::move(root_futures[t].get()));
-	}*/
-	compute_tree(root_state, job_options, 12515);
-	roots.push_back(compute_tree(root_state, job_options, 12515));
-
+	}
 	// Merge the children of all root nodes.
 	map<typename State::Move, int> visits;
 	map<typename State::Move, double> wins;

@@ -17,13 +17,6 @@ extern "C" __declspec(dllexport) Point* getPoint(const int M, const int N, const
 extern "C" __declspec(dllexport) void clearPoint(Point* p);
 
 void clearArray(int M, int N, int** board);
-
-int calculate(int **board,const int N,const int M,const int noX,const int noY,int color);
-
-void boardhash(int **board,const int N,const int M,const int noX,const int noY);
-
-int alphabeta(int **board,const int N,const int M,const int noX,const int noY,int depth,int color,int alpha,int beta);
-
 /*
 	添加你自己的辅助函数
 */
