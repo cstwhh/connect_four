@@ -294,24 +294,13 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,std::mt19937_6
 {
 	std::mt19937_64 random_engine(initial_seed);
 	attest(MAX_ITERATIONS >= 0 || MAX_TIME >= 0);
-	if (MAX_TIME >= 0) {
-		#ifndef USE_OPENMP
-		//throw std::runtime_error("ComputeOptions::max_time requires OpenMP.");
-		#endif
-	}
 	// Will support more players later.
 	attest(root_state.player_to_move == 1 || root_state.player_to_move == 2);
 	auto root = std::unique_ptr<Node<State>>(new Node<State>(root_state));
 
-	#ifdef USE_OPENMP
-	double start_time = ::omp_get_wtime();
-	double print_time = start_time;
-	#endif
-	
-	clock_t start,finish;
-	start = clock();
+	clock_t start = clock();
 
-	for (int iter = 1; iter <= MAX_ITERATIONS || MAX_ITERATIONS < 0; ++iter) {
+	while ( clock() - start < MAX_TIME ) {
 		auto node = root.get();
 		State state = root_state;
 
@@ -339,23 +328,6 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,std::mt19937_6
 		while (node != nullptr) {
 			node->update(state.get_result(node->player_to_move));
 			node = node->parent;
-		}
-
-		
-		if ( MAX_TIME >= 0) {
-			#ifdef USE_OPENMP
-			double time = ::omp_get_wtime();
-			if (options.verbose && (time - print_time >= 1.0 || iter == options.max_iterations)) {
-				std::cerr << iter << " games played (" << double(iter) / (time - start_time) << " / second)." << endl;
-				print_time = time;
-			}
-			
-			#endif
-			finish = clock();
-			if(finish - start > MAX_TIME)	{
-			//if (time - start_time >= options.max_time) {
-				break;
-			}
 		}
 	}
 	return root;

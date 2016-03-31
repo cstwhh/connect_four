@@ -58,6 +58,7 @@ extern "C" __declspec(dllexport) Point* getPoint(const int M, const int N, const
 	ConnectFourState state(M, N, board, noX, noY);
 	ConnectFourState::Move move = ConnectFourState::no_move;
 	move = MCTS::compute_move(state);
+	//cout << "move is " << move <<endl;
 	x=top[move]-1;
 	y = move;
 	/*

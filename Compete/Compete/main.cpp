@@ -66,26 +66,28 @@ void determineResult(int res, int& aWin, int& bWin, int& tie){
 }
 
 int main(int argc, char* argv[]){
-	if(argc != 5){
+	if(argc < 5){
 		cout << "Usage:" << endl;
 		cout << "Compete <StrategyA.dll> <StrategyB.dll> <result file name> <times to compete>" << endl;
 		cout << argc <<endl;
 		for(int i=0;i<argc;++i)
 			cout << "[" << i << "]" << argv[i] << endl;
 		cout<<endl;
-		system("pause");
+		//system("pause");
 		return 0;
 	}
-	
+	bool simpleInfo = (argc == 6);
 	int res;
-	ofstream out(argv[3]);
+	ofstream out;
+	if(!simpleInfo) out.open(argv[3]);
+	else out.open(argv[3],ios::app);
 
 	int aWin = 0, bWin = 0, tie = 0;
 	int numRounds = atoi(argv[4]);
 	
 	for(int i = 0; i < numRounds; i++){
 		cout << "Round " << i << ":" << endl;
-		out << i << ":" << endl;
+		if(!simpleInfo) out << i << ":" << endl;
 		
 		Data* data = new Data();
 
@@ -95,7 +97,7 @@ int main(int argc, char* argv[]){
 		//data->reset();
 		res = compete(argv[1], argv[2], true, data);
 		determineResult(res, aWin, bWin, tie);
-		out << res << "\t" << timeA << "\t" << timeB << endl;
+		if(!simpleInfo) out << res << "\t" << timeA << "\t" << timeB << endl;
 		
 		cout << "B first:" << endl;
 		timeA = 0;
@@ -103,8 +105,10 @@ int main(int argc, char* argv[]){
 		data->reset();
 		res = compete(argv[1], argv[2], false, data);
 		determineResult(res, aWin, bWin, tie);
-		out << res << "\t" << timeA << "\t" << timeB << endl;
-		out << endl;
+		if(!simpleInfo) {
+			out << res << "\t" << timeA << "\t" << timeB << endl;
+			out << endl;
+		}
 		cout << endl;
 
 		delete data;
@@ -114,13 +118,18 @@ int main(int argc, char* argv[]){
 	double rioBWin = (1.0 * bWin) / (2.0 * numRounds);
 	double rioTie = (1.0 * tie) / (2.0 * numRounds);
 
-	out << "Stat:" << endl;
-	out << "ratio of A wins : " << rioAWin << endl;
-	out << "ratio of B wins : " << rioBWin << endl;
-	out << "ratio of Tie : " << rioTie << endl;
-	out << endl;
+	if(!simpleInfo)		{
+		out << "Stat:" << endl;
+		out << "ratio of A wins : " << rioAWin << endl;
+		out << "ratio of B wins : " << rioBWin << endl;
+		out << "ratio of Tie : " << rioTie << endl;
+		out << endl;
+	}
+	else {
+		out << "fight " << atoi(argv[5]) <<" level:" << endl;
+	}
 	out << "ratio of (A wins + tie) : " << rioAWin + rioTie << endl;
-	out << "ratio of (B wins + tie) : " << rioBWin + rioTie << endl;
+	if(!simpleInfo) out << "ratio of (B wins + tie) : " << rioBWin + rioTie << endl;
 	
 	out.close();
 	
@@ -131,6 +140,6 @@ int main(int argc, char* argv[]){
 	cout << endl;
 	cout << "ratio of (A wins + tie) : " << rioAWin + rioTie << endl;
 	cout << "ratio of (B wins + tie) : " << rioBWin + rioTie << endl;
-	system("pause");
+	//system("pause");
 	return 0;
 }

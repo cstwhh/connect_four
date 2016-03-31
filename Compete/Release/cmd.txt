@@ -1,1 +1,0 @@
-Compete.exe C:\Users\Administrator\Desktop\work\人工智能导论\big\AI_project_2014\Connect4\Strategy\Release\Strategy.dll C:\Users\Administrator\Desktop\work\人工智能导论\big\AI_project_2014\TestCases\100.dll result.txt 3
