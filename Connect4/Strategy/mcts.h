@@ -1,5 +1,11 @@
 #ifndef MCTS_HEADER_PETTER
 #define MCTS_HEADER_PETTER
+
+#define MAX_ITERATIONS -1
+#define NUMBER_OF_THREADS  8
+#define MAX_TIME 3000
+#define VERBOSE false;
+	//player1_options.verbose = true; 
 //
 // Petter Strandmark 2013
 // petter.strandmark@gmail.com
@@ -47,25 +53,8 @@ private:
 
 namespace MCTS
 {
-struct ComputeOptions
-{
-	int number_of_threads; //Ïß³Ì
-	int max_iterations; //Ñ­»·
-	double max_time;
-	bool verbose;
-
-	ComputeOptions() :
-		number_of_threads(4),
-		max_iterations(10000),
-		//max_time(-1.0), // default is no time limit.
-		max_time(4.5),
-		verbose(false)
-	{ }
-};
-
 template<typename State>
-typename State::Move compute_move(const State root_state,
-                                  const ComputeOptions options = ComputeOptions());
+typename State::Move compute_move(const State root_state);
 }
 //
 //
@@ -301,13 +290,11 @@ std::string Node<State>::indent_string(int indent) const
 
 
 template<typename State>
-std::unique_ptr<Node<State>>  compute_tree(const State root_state,
-                                           const ComputeOptions& options,
-                                           std::mt19937_64::result_type initial_seed)
+std::unique_ptr<Node<State>>  compute_tree(const State root_state,std::mt19937_64::result_type initial_seed)
 {
 	std::mt19937_64 random_engine(initial_seed);
-	attest(options.max_iterations >= 0 || options.max_time >= 0);
-	if (options.max_time >= 0) {
+	attest(MAX_ITERATIONS >= 0 || MAX_TIME >= 0);
+	if (MAX_TIME >= 0) {
 		#ifndef USE_OPENMP
 		//throw std::runtime_error("ComputeOptions::max_time requires OpenMP.");
 		//cout<<"ComputeOptions::max_time requires OpenMP."<<endl;
@@ -325,7 +312,7 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,
 	clock_t start,finish;
 	start = clock();
 
-	for (int iter = 1; iter <= options.max_iterations || options.max_iterations < 0; ++iter) {
+	for (int iter = 1; iter <= MAX_ITERATIONS || MAX_ITERATIONS < 0; ++iter) {
 		auto node = root.get();
 		State state = root_state;
 
@@ -356,7 +343,7 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,
 		}
 
 		
-		if (options.verbose || options.max_time >= 0) {
+		if ( MAX_TIME >= 0) {
 			#ifdef USE_OPENMP
 			double time = ::omp_get_wtime();
 			if (options.verbose && (time - print_time >= 1.0 || iter == options.max_iterations)) {
@@ -366,7 +353,7 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,
 			
 			#endif
 			finish = clock();
-			if(finish - start > options.max_time)	{
+			if(finish - start > MAX_TIME)	{
 			//if (time - start_time >= options.max_time) {
 				break;
 			}
@@ -376,8 +363,7 @@ std::unique_ptr<Node<State>>  compute_tree(const State root_state,
 }
 
 template<typename State>
-typename State::Move compute_move(const State root_state,
-                                  const ComputeOptions options)
+typename State::Move compute_move(const State root_state)
 {
 	using namespace std;
 
@@ -395,26 +381,24 @@ typename State::Move compute_move(const State root_state,
 	#endif
 	// Start all jobs to compute trees.
 	vector<future<unique_ptr<Node<State>>>> root_futures;
-	ComputeOptions job_options = options;
-	job_options.verbose = false;
-	for (int t = 0; t < options.number_of_threads; ++t) {
-		auto func = [t, &root_state, &job_options] () -> std::unique_ptr<Node<State>>
+	for (int t = 0; t < NUMBER_OF_THREADS; ++t) {
+		auto func = [t, &root_state] () -> std::unique_ptr<Node<State>>
 		{
-			return compute_tree(root_state, job_options, 1012411 * t + 12515);
+			return compute_tree(root_state, 1012411 * t + 12515);
 		};
 
 		root_futures.push_back(std::async(std::launch::async, func));
 	}
 	// Collect the results.
 	vector<unique_ptr<Node<State>>> roots;
-	for (int t = 0; t < options.number_of_threads; ++t) {
+	for (int t = 0; t < NUMBER_OF_THREADS; ++t) {
 		roots.push_back(std::move(root_futures[t].get()));
 	}
 	// Merge the children of all root nodes.
 	map<typename State::Move, int> visits;
 	map<typename State::Move, double> wins;
 	long long games_played = 0;
-	for (int t = 0; t < options.number_of_threads; ++t) {
+	for (int t = 0; t < NUMBER_OF_THREADS; ++t) {
 		auto root = roots[t].get();
 		games_played += root->visits;
 		for (auto child = root->children.cbegin(); child != root->children.cend(); ++child) {
@@ -438,31 +422,29 @@ typename State::Move compute_move(const State root_state,
 			best_score = expected_success_rate;
 		}
 
-		if (options.verbose) {
-		//if(true){
+		/*if (VERBOSE) {
 			cerr << "Move: " << itr.first
 			     << " (" << setw(2) << right << int(100.0 * v / double(games_played) + 0.5) << "% visits)"
 			     << " (" << setw(2) << right << int(100.0 * w / v + 0.5)    << "% wins)" << endl;
-		}
+		}*/
 	}
 
 	
-	if (options.verbose) {
-	//if(true){
+	/*if (verbose) {
 		auto best_wins = wins[best_move];
 		auto best_visits = visits[best_move];
 		cerr << "----" << endl;
 		cerr << "Best: " << best_move
 		     << " (" << 100.0 * best_visits / double(games_played) << "% visits)"
 		     << " (" << 100.0 * best_wins / best_visits << "% wins)" << endl;
-	}
+	}*/
 
 	#ifdef USE_OPENMP
-	if (options.verbose) {
+	if (verbose) {
 		double time = ::omp_get_wtime();
 		std::cerr << games_played << " games played in " << double(time - start_time) << " s. " 
 		          << "(" << double(games_played) / (time - start_time) << " / second, "
-		          << options.number_of_threads << " parallel jobs)." << endl;
+		          << number_of_threads << " parallel jobs)." << endl;
 	}
 	#endif
 	return best_move;
